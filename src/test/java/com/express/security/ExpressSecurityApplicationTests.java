@@ -1,4 +1,4 @@
-package com.express.security.expresssecurity;
+package com.express.security;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
