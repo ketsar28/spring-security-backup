@@ -5,7 +5,7 @@
 ```java
 class **Description** {
  String name = "Ketsar Ali"
- String Role = "Full Stack Developer"
+ String role = "Full Stack Developer"
 
  List<String> languages = List.of("Java", "PHP", "JavaScript", "Spring Boot", "React", "C#")
 }
