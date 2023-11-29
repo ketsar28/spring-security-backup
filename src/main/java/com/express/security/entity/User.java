@@ -40,16 +40,16 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private Boolean enable = false;
 
-    @JsonProperty("enable")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Boolean getEnable() {
-        return enable;
-    }
-
     @ManyToMany(fetch = EAGER)
     @JoinTable(name = "trx_roles_users",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles = new ArrayList<>();
+
+    @JsonProperty("enable")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Boolean getEnable() {
+        return enable;
+    }
 
 }

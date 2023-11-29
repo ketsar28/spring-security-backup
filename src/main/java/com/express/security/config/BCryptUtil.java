@@ -12,4 +12,8 @@ public class BCryptUtil {
     public String hashPassword(String password){
         return passwordEncoder.encode(password);
     }
+
+    public boolean checkPassword(String oldPassword, String password) {
+        return passwordEncoder.matches(oldPassword, password);
+    }
 }

@@ -1,5 +1,6 @@
 package com.express.security.util;
 
+import com.express.security.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,6 +35,36 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public String generateRegisterToken(User user) {
+        return createRegisterToken(user);
+    }
+
+    private String createRegisterToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)))
+                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .compact();
+    }
+
+    public String generateNewRegisterToken(User user, HttpServletRequest request) {
+        return createNewRegisterToken(user, request);
+    }
+
+    private String createNewRegisterToken(User user, HttpServletRequest request) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuer(request.getRequestURL().toString())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(15)))
+                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .compact();
+    }
+
+
+
 
     public String generateToken(UserDetails userDetails) {
         return createToken(userDetails);

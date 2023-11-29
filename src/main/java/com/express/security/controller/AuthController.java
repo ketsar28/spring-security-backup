@@ -2,7 +2,12 @@ package com.express.security.controller;
 
 import com.express.security.dto.AuthenticationRequest;
 import com.express.security.dto.CommonResponse;
+import com.express.security.dto.PasswordRequest;
+import com.express.security.dto.UserRequest;
+import com.express.security.entity.User;
 import com.express.security.entity.UserDetailsApp;
+import com.express.security.entity.VerificationToken;
+import com.express.security.event.RegistrationCompleteEvent;
 import com.express.security.service.UserService;
 import com.express.security.service.impl.CustomUserDetailsImpl;
 import com.express.security.service.impl.UserServiceImpl;
@@ -10,6 +15,8 @@ import com.express.security.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -34,6 +43,69 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsImpl customUserDetails;
+
+    private final UserService userService;
+    private final ApplicationEventPublisher publisher;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRequest request, HttpServletRequest requestUrl) {
+        User user = userService.registerUser(request);
+        RegistrationCompleteEvent event = new RegistrationCompleteEvent(user, applicationUrl(requestUrl));
+
+        publisher.publishEvent(event);
+
+        CommonResponse<?> response = CommonResponse.builder()
+                .statusCode(CREATED)
+                .data(user)
+                .build();
+
+        return ResponseEntity.status(CREATED).body(response);
+    }
+
+    private String applicationUrl(HttpServletRequest requestUrl) {
+        return "http://" + requestUrl.getServerName() + ":" + requestUrl.getServerPort() + requestUrl.getContextPath();
+    }
+
+    @GetMapping("/verifyRegistration")
+    public ResponseEntity<?> verifyRegistration(@RequestParam("token") String token) {
+        String result = userService.validateVerificationToken(token);
+        if (result.equalsIgnoreCase("valid")) {
+            CommonResponse<?> response = CommonResponse.builder()
+                    .statusCode(OK)
+                    .data("user has been verified successfully")
+                    .build();
+
+            return ResponseEntity.ok(response);
+        }
+
+        CommonResponse<?> response = CommonResponse.builder()
+                .statusCode(BAD_REQUEST)
+                .data(result)
+                .build();
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @GetMapping("/resendVerifyToken")
+    public ResponseEntity<?> generateNewToken(@RequestParam("token") String oldToken, HttpServletRequest request) {
+        VerificationToken verificationToken = userService.generateNewToken(oldToken, request);
+
+        User user = verificationToken.getUser();
+        resendVerificationToken(user, applicationUrl(request), verificationToken);
+
+        CommonResponse<?> response = CommonResponse.builder()
+                .data("verification link sent successfully")
+                .statusCode(CREATED)
+                .build();
+        return ResponseEntity.status(CREATED).body(response);
+    }
+
+    private void resendVerificationToken(User user, String applicationUrl, VerificationToken verificationToken) {
+        // send mail to user
+        String url = applicationUrl + "/api/auth/verifyRegistration?token=" + verificationToken.getToken();
+
+        // verificationEmail()
+        log.info("click the link to verify: {}", url);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) {
