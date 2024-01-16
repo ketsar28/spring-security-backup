@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "express.jwt-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'express.jwt-secret'"
+  },
+  {
+    "name": "express.jwt-expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'express.jwt-expiration'"
+  }
+]}

@@ -1,10 +1,9 @@
 package com.express.security.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
-
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
 
 
 @Getter

@@ -2,15 +2,15 @@ package com.express.security.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static javax.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.EAGER;
 
 
 @Getter

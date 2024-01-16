@@ -14,11 +14,11 @@ public class ErrorController {
     public ResponseEntity<?> responseStatusException(ResponseStatusException exception) {
         CommonResponse<?> commonResponse = CommonResponse.builder()
                 .errors(exception.getReason())
-                .statusCode(exception.getStatus())
+                .statusCode((HttpStatus) exception.getStatusCode())
                 .build();
 
         return ResponseEntity
-                .status(exception.getStatus())
+                .status(exception.getStatusCode())
                 .body(commonResponse);
     }
     @ExceptionHandler(value = ConstraintViolationException.class)

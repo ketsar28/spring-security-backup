@@ -3,10 +3,10 @@ package com.express.security.service;
 import com.express.security.dto.UserRequest;
 import com.express.security.entity.User;
 import com.express.security.entity.VerificationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     // User saveUser(User request);

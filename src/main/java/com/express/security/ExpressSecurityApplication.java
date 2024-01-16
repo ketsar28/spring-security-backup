@@ -2,7 +2,6 @@ package com.express.security;
 
 import com.express.security.entity.Role;
 import com.express.security.repository.RoleRepository;
-import com.express.security.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
