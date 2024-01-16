@@ -29,7 +29,7 @@ public class AuthController {
     private final ApplicationEventPublisher publisher;
 
     @PostMapping("/register")
-    public ResponseEntity<?> getUser(@RequestBody UserModel userModel, final HttpServletRequest requestUrl) {
+    public ResponseEntity<?> registerUser(@RequestBody UserModel userModel, final HttpServletRequest requestUrl) {
         User user = userService.registerUser(userModel);
 
         RegistrationCompleteEvent event = new RegistrationCompleteEvent(user, applicationUrl(requestUrl));
